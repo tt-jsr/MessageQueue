@@ -6,11 +6,12 @@ bool AnalogReadExecute(int& value, int ID, int PIN, MessageQueue *mq);
 bool AnalogReadIntervalExecute(int& value, unsigned long& readTime, int ID, int PIN, unsigned long INTERVAL, MessageQueue *mq);
 bool DigitalReadDebounceExecute(int& state, unsigned long& t, int ID, int PIN, unsigned long DB, MessageQueue *mq);
 bool TimerExecute(int& trigger, int ID, int INTERVAL, bool REPEAT, MessageQueue *mq);
-bool PulseRepeatExecute(int& state, unsigned long& trigger, int ID, int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW);
-bool PulseExecute(unsigned long& trigger, int ID, int PIN, unsigned long DURATION, int STATE);
+bool PulseRepeatExecute(int& state, unsigned long& trigger, int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW);
+bool PulseExecute(unsigned long& trigger, int PIN, unsigned long DURATION, int STATE);
 void PulseRepeatRun(int& state, unsigned long& trigger, int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW, int startState);
 bool StateExecute(int& state, int ID, unsigned long v);
 
+/*****************************************************************/
 template <int ID, int PIN>
 DigitalRead<ID, PIN>::DigitalRead(int def, int mode)
 :state(def)
@@ -29,11 +30,36 @@ int DigitalRead<ID, PIN>::getState() {return state;}
 
 /*****************************************************************/
 
+template <int PIN>
+DigitalWrite<PIN>::DigitalWrite()
+{
+    pinMode(PIN, OUTPUT);
+}
+
+template <int PIN>
+void DigitalWrite<PIN>::high()
+{
+    digitalWrite(PIN, HIGH);
+}
+
+template <int PIN>
+void DigitalWrite<PIN>::low()
+{
+    digitalWrite(PIN, LOW);
+}
+
+template <int PIN>
+void DigitalWrite<PIN>::write(int v)
+{
+    digitalWrite(PIN, v);
+}
+
+/*****************************************************************/
+
 template <int ID, int PIN>
 AnalogRead<ID, PIN>::AnalogRead()
 :value(0)
 {
-    pinMode(PIN, INPUT);
 }
 
 template <int ID, int PIN>
@@ -52,8 +78,6 @@ AnalogReadInterval<ID, PIN, INTERVAL>::AnalogReadInterval()
 :value(0)
 ,readTime(0)
 {
-    pinMode(PIN, INPUT);
-    readTime = micros() + INTERVAL;
 }
 
 template <int ID, int PIN, unsigned long INTERVAL>
@@ -114,21 +138,22 @@ void Timer<ID, INTERVAL, REPEAT>::pause()
 
 /******************************************************************/
 
-template <int ID, int PIN, unsigned long DURATION, int STATE>
-Pulse<ID, PIN, DURATION, STATE>::Pulse()
+template <int PIN, unsigned long DURATION, int STATE>
+Pulse<PIN, DURATION, STATE>::Pulse()
 :trigger_(0)
 {
     pinMode(PIN, OUTPUT);
+    digitalWrite(PIN, !STATE);
 }
 
-template <int ID, int PIN, unsigned long DURATION, int STATE>
-int Pulse<ID, PIN, DURATION, STATE>::execute()
+template <int PIN, unsigned long DURATION, int STATE>
+int Pulse<PIN, DURATION, STATE>::execute()
 {
-    return PulseExecute(trigger_, ID, PIN, DURATION, STATE);
+    return PulseExecute(trigger_, PIN, DURATION, STATE);
 }
 
-template <int ID, int PIN, unsigned long DURATION, int STATE>
-void Pulse<ID, PIN, DURATION, STATE>::trigger()
+template <int PIN, unsigned long DURATION, int STATE>
+void Pulse<PIN, DURATION, STATE>::trigger()
 {
     trigger_ = micros() + DURATION;
     digitalWrite(PIN, STATE);
@@ -136,27 +161,27 @@ void Pulse<ID, PIN, DURATION, STATE>::trigger()
 
 /********************************************************************/
 
-template <int ID, int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW>
-PulseRepeat<ID, PIN, DURATION_HIGH, DURATION_LOW>::PulseRepeat()
+template <int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW>
+PulseRepeat<PIN, DURATION_HIGH, DURATION_LOW>::PulseRepeat()
 :trigger_(0)
 {
     pinMode(PIN, OUTPUT);
 }
 
-template <int ID, int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW>
-bool PulseRepeat<ID, PIN, DURATION_HIGH, DURATION_LOW>::execute()
+template <int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW>
+bool PulseRepeat<PIN, DURATION_HIGH, DURATION_LOW>::execute()
 {
-    return PulseRepeatExecute(state, trigger_, ID, PIN, DURATION_HIGH, DURATION_LOW);
+    return PulseRepeatExecute(state, trigger_, PIN, DURATION_HIGH, DURATION_LOW);
 }
 
-template <int ID, int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW>
-void PulseRepeat<ID, PIN, DURATION_HIGH, DURATION_LOW>::run(int startState)
+template <int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW>
+void PulseRepeat<PIN, DURATION_HIGH, DURATION_LOW>::run(int startState)
 {
     PulseRepeatRun(state, trigger_, PIN, DURATION_HIGH, DURATION_LOW, startState);
 }
 
-template <int ID, int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW>
-void PulseRepeat<ID, PIN, DURATION_HIGH, DURATION_LOW>::stop(int endState)
+template <int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW>
+void PulseRepeat<PIN, DURATION_HIGH, DURATION_LOW>::stop(int endState)
 {
     digitalWrite(PIN, endState);
     trigger_ = 0;

@@ -92,6 +92,24 @@ struct DigitalRead
     int state;
 };
 
+/* Write a digital pin. 
+ * Template parameters
+ *  PIN: The digital pin to write
+ */
+template <int PIN>
+struct DigitalWrite
+{
+    enum values {
+        pin = PIN
+    };
+
+    DigitalWrite();
+
+    void high();
+    void low();
+    void write(int);    // HIGH or LOW
+};
+
 /* Read a digital pin with debounce. An event will only be posted
  * if the state changes.
  *
@@ -235,13 +253,12 @@ struct Timer
     // Pause the timer
     void pause();
 
-    int trigger;
+    int trigger = 0;
 };
 
 /* Pulse an output for a given duration
  *
  * Template parameters
- *       ID: The identifier for this object
  *      PIN: The digital pin to output
  * DURATION: The pulse duration, in microseconds
  *    STATE: Either HIGH or LOW for the first pulse
@@ -249,11 +266,10 @@ struct Timer
  * get_message:
  *    No events for this function
  */
-template <int ID, int PIN, unsigned long DURATION, int STATE>
+template <int PIN, unsigned long DURATION, int STATE>
 struct Pulse
 {
     enum values {
-        id = ID,
         pin = PIN
     };
 
@@ -275,7 +291,6 @@ struct Pulse
  * expect some drift.
  *
  * Template parameters
- *            ID: The identifier for this object
  *           PIN: The digital pin to output.
  * DURATION_HIGH: Duration of the HIGH state, in microseconds
  *  DURATION_LOW: Duration of the LOW state, in microseconds
@@ -283,11 +298,10 @@ struct Pulse
  * get_message:
  *    No events for this function
  */
-template <int ID, int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW>
+template <int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW>
 struct PulseRepeat
 {
     enum values {
-        id = ID,
         pin = PIN
     };
 

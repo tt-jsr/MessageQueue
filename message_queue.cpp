@@ -159,7 +159,7 @@ bool TimerExecute(int& trigger, int ID, int INTERVAL, bool REPEAT, MessageQueue 
     return false;
 }
 
-bool PulseExecute(unsigned long& trigger, int ID, int PIN, unsigned long DURATION, int STATE)
+bool PulseExecute(unsigned long& trigger, int PIN, unsigned long DURATION, int STATE)
 {
     if (trigger == 0)
         return false;
@@ -172,7 +172,7 @@ bool PulseExecute(unsigned long& trigger, int ID, int PIN, unsigned long DURATIO
     return false;
 }
 
-bool PulseRepeatExecute(int& state, unsigned long& trigger, int ID, int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW)
+bool PulseRepeatExecute(int& state, unsigned long& trigger, int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW)
 {
     if (trigger == 0)
         return false;
