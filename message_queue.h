@@ -253,7 +253,7 @@ struct Timer
     // Pause the timer
     void pause();
 
-    int trigger = 0;
+    unsigned long trigger = 0;
 };
 
 /* Pulse an output for a given duration

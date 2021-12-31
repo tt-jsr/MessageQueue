@@ -5,7 +5,7 @@ bool DigitalReadExecute(int& state, int ID, int PIN, MessageQueue *mq);
 bool AnalogReadExecute(int& value, int ID, int PIN, MessageQueue *mq);
 bool AnalogReadIntervalExecute(int& value, unsigned long& readTime, int ID, int PIN, unsigned long INTERVAL, MessageQueue *mq);
 bool DigitalReadDebounceExecute(int& state, unsigned long& t, int ID, int PIN, unsigned long DB, MessageQueue *mq);
-bool TimerExecute(int& trigger, int ID, int INTERVAL, bool REPEAT, MessageQueue *mq);
+bool TimerExecute(unsigned long& trigger, int ID, int INTERVAL, bool REPEAT, MessageQueue *mq);
 bool PulseRepeatExecute(int& state, unsigned long& trigger, int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW);
 bool PulseExecute(unsigned long& trigger, int PIN, unsigned long DURATION, int STATE);
 void PulseRepeatRun(int& state, unsigned long& trigger, int PIN, unsigned long DURATION_HIGH, unsigned long DURATION_LOW, int startState);

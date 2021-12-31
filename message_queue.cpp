@@ -142,7 +142,7 @@ bool DigitalReadDebounceExecute(int& state, unsigned long& t, int ID, int PIN, u
     return false;
 }
 
-bool TimerExecute(int& trigger, int ID, int INTERVAL, bool REPEAT, MessageQueue *mq)
+bool TimerExecute(unsigned long& trigger, int ID, int INTERVAL, bool REPEAT, MessageQueue *mq)
 {
     if (trigger == 0)
         return false;
